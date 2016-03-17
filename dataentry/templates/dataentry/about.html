@@ -1,0 +1,27 @@
+{% load staticfiles %}
+    <!-- About section --> 
+    <section class="for-full-back color-white" id="about">
+        <div class="container">
+            <div class="row text-center">
+                <div class="col-md-8 col-md-offset-2">
+                    <h1>ABOUT</h1>
+                </div>
+            </div>
+            <p> This website is the interface for the Kumbh Mela (meta)database with which we try to keep track of all the incoming files for the various subexperiments during the Kumbh Mela festival in April/May 2016. See this <a href="http://www.the-kumbh-mela-experiment.com/">link</a> for more information on the overall project. 
+            </p>
+
+            <p> The layout for this website is taken from <a href="http://www.free-css.com/free-css-templates/page193/lucenta#shout">free-css.com</a>. The icons used to represent the various forms of data were taken from the <a href="http://www.flaticon.com/packs/font-awesome">Font Awesome</a> collection. </p>
+
+            <p> The code is publicly available at <a href="">
+            </a> under the MIT license. 
+            </p>
+
+            <p> The figure below shows a visual representation of the database structure. The key PK and FK stand for primary and foreign key, respectively. 
+            </p>
+
+            <div class="row text-center">
+                <img src="{% static 'img/SQLdiagram_kumbhmela.svg' %}" alt="Database architecture" style="width:80%">
+            </div>
+        </div>
+
+    </section>
