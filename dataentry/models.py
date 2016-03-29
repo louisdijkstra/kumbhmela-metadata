@@ -163,11 +163,10 @@ class File(models.Model):
 		of all files on the various drives for the Kumbh Mela experiment. 
 	"""
 	
-	# the drive on which the file is stored
-	drive           = models.ForeignKey(Drive, on_delete=models.CASCADE,
-							help_text="The drive on which the file is stored.")
-	path            = models.CharField(max_length=300,
-							help_text="The path/location of the file on the drive.") 
+	# a file can be stored a several drives:
+	drive           = models.ManyToManyField(Drive, 
+							through='StorageLocation',
+							help_text="The drives on which the file is stored.")
 	format          = models.ForeignKey(Format,
 							on_delete=models.CASCADE, 
 							blank=True,
@@ -195,6 +194,7 @@ class File(models.Model):
 							blank=True, 
 							help_text="Time when the drive was added to the drive bay (optional).")
 	size            = models.IntegerField(blank=True, 
+							null=True,
 							help_text="Size in bytes (optional).")
 	start_recording = models.DateTimeField(blank=True, 
 							null=True,
@@ -207,5 +207,33 @@ class File(models.Model):
 							help_text="Additional notes on this file (optional).")
 
 	def __str__(self): 
-		return "File %s on disk %s"%(self.path, self.drive.label)
+		"""Returns the file path"""
+		filepaths = set()
+		n_copies = 0 # the number of copies
+
+		for storagelocation in self.storagelocation_set.all(): 
+			filepaths.add(storagelocation.path)
+			n_copies += 1
+
+		if n_copies == 1: 
+			return ', '.join(filepaths) + ' (1 copy)'
+
+		return ', '.join(filepaths) + ' (%s copies)'%(int(n_copies))
+
+
+class StorageLocation(models.Model):
+	"""
+		A location where a specific file is stored. This model/table
+		links files and drives together. (Each file can be stored on
+		multiple drives under different names).
+	"""
+	drive = models.ForeignKey(Drive,
+					on_delete=models.CASCADE)
+	file  = models.ForeignKey(File,
+					on_delete=models.CASCADE)
+	path  = models.CharField(max_length=300,
+					help_text="Path of the file on the drive.")
+
+	def __str__(self): 
+		return "File %s on Drive %s"%(self.path, self.drive.label)
 

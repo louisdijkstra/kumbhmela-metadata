@@ -9,6 +9,13 @@ __author__ = "Louis Dijkstra"
 	are added here
 """
 
+class StorageLocationInline(admin.TabularInline):
+    model = StorageLocation
+    extra = 1
+
+class FileAdmin(admin.ModelAdmin): 
+	inlines = (StorageLocationInline,) 
+
 admin.site.register(Drive)
 admin.site.register(DriveCopy)
 admin.site.register(Person)
@@ -16,5 +23,6 @@ admin.site.register(Experiment)
 admin.site.register(Format)
 admin.site.register(Location)
 admin.site.register(Sensor)
-admin.site.register(File)
+admin.site.register(File, FileAdmin)
 admin.site.register(Source)
+admin.site.register(StorageLocation)
