@@ -18,10 +18,17 @@ class Drive(models.Model):
 	"""
 	label        = models.CharField(max_length=50,
 						help_text="Label added to the drive, e.g., 'kumbhmela_5'.")
-	time_added   = models.DateTimeField(blank=True, 
+	external 	 = models.BooleanField(default=False, 
+						help_text="True when the drive is external and false otherwise.")
+	time_added   = models.DateTimeField(blank=True,
+						null=True, 
 						help_text="Time when the drive was added to the drive bay.")
 	time_removed = models.DateTimeField(blank=True,
+						null=True,
 						help_text="Time when the drive was removed from the drive bay.")
+	whereabouts  = models.TextField(max_length=1000,
+						blank=True, 
+						help_text="Whereabouts of this drive copy, e.g., who had it lasts, where is it now etc. (optional).")
 	note         = models.TextField(max_length=1000,
 						blank=True, 
 						help_text="Additional notes on this (collection of) drive(s) (optional).")
