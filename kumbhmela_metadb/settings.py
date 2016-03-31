@@ -26,11 +26,14 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+# Template pack used by django-crispy-forms
+CRISPY_TEMPLATE_PACK = 'bootstrap3'
 
 # Application definition
 
 INSTALLED_APPS = [
     'dataentry.apps.DataentryConfig',
+    'crispy_forms',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

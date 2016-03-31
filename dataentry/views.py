@@ -1,15 +1,118 @@
-from django.shortcuts import render, get_object_or_404, get_list_or_404
+from django.shortcuts import render, get_object_or_404, get_list_or_404, redirect
 from django.http import HttpResponse
 from django.apps import apps
 from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
+from django.utils import timezone
 from collections import OrderedDict
 
 from .models import *
+from .forms import * 
 
 __author__ = "Louis Dijkstra"
 
 APP_LABEL = "dataentry"
+
+def sensor_new(request): 
+	"""
+		Page for adding sensors.
+	"""
+	if request.method == "POST": 
+		form = SensorForm(request.POST) 
+		if form.is_valid(): 
+			for copy in range( int(form.cleaned_data['number_of_copies']) ):
+				sensor = Sensor(
+							sensor_type = form.cleaned_data['sensor_type'],
+							note        = form.cleaned_data['note']
+						)
+				sensor.save()
+				for format in form.cleaned_data['format']: 
+					sensor.format.add(format)
+				sensor.save()
+			return redirect('/Sensor/list', None)
+	else: 
+		form = SensorForm()
+	
+	context = { 
+				'form' : form, 
+				'title': 'Adding new sensors',
+			  }	
+	return render(request, 'dataentry/sensor_edit.html', context)
+
+
+def drive_new(request): 
+	"""
+		Page for adding a new (normal or external)
+		harddrive. 
+	"""
+	if request.method == "POST": 
+		form = DriveForm(request.POST) 
+		if form.is_valid(): 
+			drive            = form.save(commit=False)
+			drive.time_added = timezone.now()
+			drive.save()
+
+			if not drive.external: 
+				# creat copydrives: 
+				for copy in range( int(form.cleaned_data['number_of_copies']) ): 
+					label       = drive.label + '-' + str(copy+1)
+					copydrive   = DriveCopy(label=label,
+							 number      = copy+1,
+							 whereabouts = "",
+							 note        = "",
+							 drive 		 = drive
+						)
+					copydrive.save()
+
+
+			return redirect('/drive/' + str(drive.pk), None)
+	else: 
+		form = DriveForm()
+	
+	context = { 
+				'form' : form, 
+				'title': 'Adding a new drive',
+			  }	
+	return render(request, 'dataentry/drive_edit.html', context)
+
+def drive_edit(request, pk): 
+	""" 
+		Returns a view for editing the drive given the 
+		drive's id 
+	"""
+	drive = get_object_or_404(Drive, pk=pk)
+
+	if request.method == "POST": 
+		form = DriveForm(request.POST, instance=drive)
+		if form.is_valid():
+			drive            = form.save(commit=False)
+			drive.time_added = timezone.now()
+			drive.save()
+
+			if not drive.external: 
+				# creat copydrives: 
+				for copy in range( int(form.cleaned_data['number_of_copies']) ): 
+					label       = drive.label + '-' + str(copy+1)
+					copydrive   = DriveCopy(label=label,
+							 number      = copy+1,
+							 whereabouts = "",
+							 note        = "",
+							 drive 		 = drive
+						)
+					copydrive.save()
+
+
+			return redirect('/drive/' + str(drive.pk), None)
+	else: 
+		form = DriveForm(instance=drive)
+
+	context = { 
+				'form' : form, 
+				'title': 'Drive %s'%drive.label,
+			  }	
+	return render(request, 'dataentry/drive_edit.html', context)
+
+
 
 def index(request): 
 	"""
@@ -68,6 +171,7 @@ def view_detail(request, model_str, object_id):
 
 	# pass the necessary context to the html tempate 
 	context = { 
+		'object_id': object_id, # the id of the object
 		'model_str': model_str, # the name of the model 
 		'object': dict_object, # the data
 		'fields': fields, # all fields of this model
