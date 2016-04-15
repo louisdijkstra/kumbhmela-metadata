@@ -42,11 +42,22 @@ You can access the site by opening your favorite browser and going to the addres
 
 ## Creating a back-up
 
-The file `kumbhmela_db.sqlite3` contains the entire database. Simply copy this file to your (thumb) drive. 
+In order to back-up the (meta)database, follow the following steps:
 
-## Adding data
+* Go to the main directory of the repository and locate the file `kumbhmela_db.sqlite3`. This file contains all (meta)data. 
+ 
+* Copy the file to a thumb drive (or mail it).
 
-For adding data, access the admin part of the site <http://127.0.0.1:8000/admin>. 
+* Make sure to make a note about the time of the back-up. Otherwise is might be hard to afterwards figure out which back-up was which.
+
+## Accessing the admin site
+
+Normally you would not find a section on a website about how to access the admin site, especially not with the username and password explicitly written down. Since this site is not going to be online (it will only run locally in the server room), there is no danger to put this here:
+
+__username__: `kumbhmela`
+__password__: `pepernoten`
+
+By clicking <http://127.0.0.1:8000/admin> and filling in the username and password, you can access the admin part of the site.
 
 ### How to change the database structure? 
 
@@ -57,6 +68,10 @@ their fields. After making the desired changes, type
     $ python manage.py migrate 
 
 The database is now updated. 
+
+## Additional information
+
+For a description of relational database structure and the way how to explore and add data, see <http://127.0.0.1:8000/#howto>.
 
 ## Contact
 
